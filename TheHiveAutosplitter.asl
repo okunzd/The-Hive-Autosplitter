@@ -1,7 +1,6 @@
 state("TheHive_S1_102410"){
     int LevelNumber: 0x1AF2F8;
     /*
-    Funktioniert zu 99,9% präzise, dank statischer Adresse
     Main Menu = 131
     Inventory = 93
     Intro = 133
@@ -18,28 +17,87 @@ state("TheHive_S1_102410"){
 
     double EndTimer: 0x1AF2F0, 0x2B0, 0x78, 0x508, 0x0, 0x10C, 0x4, 0x10;
     //Timer from 9 to 0 in double 
+
+    double Move: 0x001AF2F4, 0x80, 0x1C, 0x0, 0x10C, 0x4, 0xB0;
+    //0x001AF2F4, 0x5C, 0xB4, 0x0, 0x10C, 0x4, 0xB0;
+    //0x001AF2F4, 0x60, 0x6C, 0x0, 0x10C, 0x4, 0xB0;
+    //0x001AF2F4, 0x78, 0x1C, 0x0, 0x10C, 0x4, 0xB0;
 }
 init{
     int splitnum;
 }
+startup{ 
+    //Start-Trigger
+    settings.Add("Start-Trigger", true, "Start-Trigger");
+    settings.Add("Intro", true, "Intro", "Start-Trigger");
+    settings.Add("FirstMove", false, "First Move", "Start-Trigger");
+    settings.Add("OpenDoor", false, "Open Door", "Start-Trigger");
+
+    //Split-Trigger
+    settings.Add("Split-Trigger", true, "Split-Trigger");
+    settings.Add("Level3Door", true, "Level 3 Door", "Split-Trigger");
+    settings.Add("Level4Door", true, "Level 4 Door", "Split-Trigger");
+    settings.Add("Level5Door", true, "Level 5 Door", "Split-Trigger");
+    settings.Add("Level6Door", false, "Level 6 Door", "Split-Trigger");
+    settings.Add("Level7Door", false, "Level 7 Door", "Split-Trigger");
+    settings.Add("VanKlaus", true, "Van Klaus", "Split-Trigger");
+    settings.Add("End", true, "End", "Split-Trigger");
+    
+    //Reset-Trigger
+    settings.Add("Reset-Trigger", true, "Reset-Trigger");
+    settings.Add("NewGame", true, "New Game", "Reset-Trigger");
+    settings.Add("MainMenu", false, "Main Menu", "Reset-Trigger");
+    
+}
 start{
     //Starts Timer after 95 / First Level after intro. And to not start again after reset it checks a few things :D
-    if(current.LevelNumber==95 && current.LevelNumber != old.LevelNumber && old.LevelNumber != 93 && old.LevelNumber != 181){vars.splitnum=0; return true;}
+    if (settings["Intro"]) { 
+        if(current.LevelNumber==95 && current.LevelNumber != old.LevelNumber && old.LevelNumber != 93 && old.LevelNumber != 181){vars.splitnum=0; return true;}
+    }
+    //Starts Timer after Walking Double is not 0 - Walking is +3/-3, Sneaking is +-1, Jumping is +-5
+    if (settings["FirstMove"]) { 
+        if(current.Move!=0){vars.splitnum=0; return true;}
+    }
+    if (settings["OpenDoor"]) {
+        if(current.Door1 != 0 || current.Door2 != 0){vars.splitnum=0; return true;}
+    }
 }
 split{
     //Splits when opening Level 3 door
-    if(vars.splitnum == 0 && current.LevelNumber==103 && current.Door1 > 0){vars.splitnum++; return true;}
+    if(vars.splitnum == 0 && settings["Level3Door"] && current.LevelNumber==103 && current.Door1 > 0){vars.splitnum++; return true;}
+    if(vars.splitnum == 0 && settings["Level3Door"] == false){vars.splitnum++;}
+
     //Splits when opening Level 4 door
-    if(vars.splitnum == 1 && current.LevelNumber==109 && current.Door1 > 0){vars.splitnum++; return true;}
+    if(vars.splitnum == 1 && settings["Level4Door"] && current.LevelNumber==109 && current.Door1 > 0){vars.splitnum++; return true;}
+    if(vars.splitnum == 1 && settings["Level4Door"] == false){vars.splitnum++;}
+
     //Splits when opening Level 5 door
-    if(vars.splitnum == 2 && current.LevelNumber==66 && current.Door2 > 0){vars.splitnum++; return true;}
+    if(vars.splitnum == 2 && settings["Level5Door"] && current.LevelNumber==66 && current.Door2 > 0){vars.splitnum++; return true;}
+    if(vars.splitnum == 2 && settings["Level5Door"] == false){vars.splitnum++;}
+
+    //Splits when opening Level 6 door
+    if(vars.splitnum == 3 && settings["Level6Door"] && current.LevelNumber==89 && current.Door1 > 0){vars.splitnum++; return true;}
+    if(vars.splitnum == 3 && settings["Level6Door"] == false){vars.splitnum++;}
+    
+    //Splits when opening Level 7 door
+    if(vars.splitnum == 4 && current.LevelNumber==80 && current.Door1 > 0){vars.splitnum++; return true;}
+    //Alternative for Skipping Level 7 Door
+    if(vars.splitnum == 4 && settings["Level7Door"] && current.LevelNumber==170){vars.splitnum++; return true;}
+    if(vars.splitnum == 4 && settings["Level7Door"] == false){vars.splitnum++;}
+
     //Splits when entering Van Klaus room
-    if(vars.splitnum == 3 && current.LevelNumber==172){vars.splitnum++; return true;}
-    //Ends when timer is 0 / first frame of explotion
-    if(vars.splitnum == 4 && current.EndTimer == 9 && current.LevelNumber == 172){vars.splitnum++; return true;}
+    if(vars.splitnum == 5 && settings["VanKlaus"] && current.LevelNumber==172){vars.splitnum++; return true;}
+    if(vars.splitnum == 5 && settings["VanKlaus"] == false){vars.splitnum++;}
+
+    //Split when timer is 9 before explotion
+    if(vars.splitnum == 6 && settings["End"] && current.EndTimer == 9 && current.LevelNumber == 172){vars.splitnum++; return true;}
+    if(vars.splitnum == 6 && settings["End"] == false){vars.splitnum++;}
 }
 reset{
-    if(current.LevelNumber == 133){return true;}
+    //Reset on New Game
+    if(settings["NewGame"]){if(current.LevelNumber == 133){return true;}}
+    //Reset on Main Menu
+    if(settings["MainMenu"]){if(current.LevelNumber == 131){return true;}}
 }
 /* Pause if in a HUD or Menu
 isLoading{
