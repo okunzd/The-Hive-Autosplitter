@@ -29,7 +29,7 @@ init{
 startup{ 
     //Start-Trigger
     settings.Add("Start-Trigger", true, "Start-Trigger");
-    settings.Add("Intro", true, "Intro", "Start-Trigger");
+    settings.Add("Level 1+2", true, "Level 1+2", "Start-Trigger");
     settings.Add("FirstMove", false, "First Move", "Start-Trigger");
     settings.Add("OpenDoor", false, "Open Door", "Start-Trigger");
 
@@ -51,7 +51,7 @@ startup{
 }
 start{
     //Starts Timer after 95 / First Level after intro. And to not start again after reset it checks a few things :D
-    if (settings["Intro"]) { 
+    if (settings["Level 1+2"]) { 
         if(current.LevelNumber==95 && current.LevelNumber != old.LevelNumber && old.LevelNumber != 93 && old.LevelNumber != 181){vars.splitnum=0; return true;}
     }
     //Starts Timer after Walking Double is not 0 - Walking is +3/-3, Sneaking is +-1, Jumping is +-5
