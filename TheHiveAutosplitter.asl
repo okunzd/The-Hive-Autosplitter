@@ -1,4 +1,4 @@
-state("TheHive_S1_102410"){
+state("TheHive_S1_102410"){ //Memory addresses
     int LevelNumber: 0x1AF2F8;
     /*
     Main Menu = 131
@@ -22,11 +22,14 @@ state("TheHive_S1_102410"){
     //0x001AF2F4, 0x5C, 0xB4, 0x0, 0x10C, 0x4, 0xB0;
     //0x001AF2F4, 0x60, 0x6C, 0x0, 0x10C, 0x4, 0xB0;
     //0x001AF2F4, 0x78, 0x1C, 0x0, 0x10C, 0x4, 0xB0;
+
+    double Jump: 0x001AF2F4, 0x78, 0x1C, 0x0, 0x10C, 0x4, 0x218;
+    //0x001AF2F4, 0x80, 0x1C, 0x0, 0x10C, 0x4, 0x218;    
 }
-init{
+init{ //vars
     int splitnum;
 }
-startup{ 
+startup{ // Settings
     //Start-Trigger
     settings.Add("Start-Trigger", true, "Start-Trigger");
     settings.Add("Level 1+2", true, "Level 1+2", "Start-Trigger");
@@ -56,7 +59,7 @@ start{
     }
     //Starts Timer after Walking Double is not 0 - Walking is +3/-3, Sneaking is +-1, Jumping is +-5
     if (settings["FirstMove"]) { 
-        if(current.Move!=0){vars.splitnum=0; return true;}
+        if(current.Move != 0 || current.Jump != 0){vars.splitnum=0; return true;}
     }
     if (settings["OpenDoor"]) {
         if(current.Door1 != 0 || current.Door2 != 0){vars.splitnum=0; return true;}
