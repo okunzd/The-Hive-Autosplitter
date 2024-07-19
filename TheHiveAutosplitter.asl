@@ -29,6 +29,7 @@ state("TheHive_S1_102410"){ //Memory addresses
 }
 init{ //vars
     int splitnum;
+    refreshRate = 70;
 }
 startup{ // Settings
     //Start-Trigger
@@ -51,7 +52,6 @@ startup{ // Settings
     settings.Add("Reset-Trigger", true, "Reset-Trigger");
     settings.Add("NewGame", true, "New Game", "Reset-Trigger");
     settings.Add("MainMenu", false, "Main Menu", "Reset-Trigger");
-    
 }
 start{
     //Starts Timer after 95 / First Level after intro. And to not start again after reset it checks a few things :D
@@ -60,7 +60,7 @@ start{
     }
     //Starts Timer after Walking Double is not 0 - Walking is +3/-3, Sneaking is +-1, Jumping is +-5
     if (settings["FirstMove"]) { 
-        if(current.Move != 0 || current.Jump > old.Jump && old.Jump != 0){vars.splitnum=0; return true;}
+        if(current.Move != 0){vars.splitnum=0; return true;}
     }
     if (settings["OpenDoor"]) {
         if(current.Door1 != 0 || current.Door2 != 0){vars.splitnum=0; return true;}
