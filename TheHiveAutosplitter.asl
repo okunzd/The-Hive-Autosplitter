@@ -25,6 +25,7 @@ state("TheHive_S1_102410"){ //Memory addresses
 
     double Jump: 0x001AF2F4, 0x78, 0x1C, 0x0, 0x10C, 0x4, 0x218;
     //0x001AF2F4, 0x80, 0x1C, 0x0, 0x10C, 0x4, 0x218;    
+    //Jump counts from 0 up and is delayed
 }
 init{ //vars
     int splitnum;
@@ -59,7 +60,7 @@ start{
     }
     //Starts Timer after Walking Double is not 0 - Walking is +3/-3, Sneaking is +-1, Jumping is +-5
     if (settings["FirstMove"]) { 
-        if(current.Move != 0 || current.Jump != 0){vars.splitnum=0; return true;}
+        if(current.Move != 0 || current.Jump > old.Jump && old.Jump != 0){vars.splitnum=0; return true;}
     }
     if (settings["OpenDoor"]) {
         if(current.Door1 != 0 || current.Door2 != 0){vars.splitnum=0; return true;}
