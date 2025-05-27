@@ -10,6 +10,9 @@ state("TheHive_S1_102410"){ //Memory addresses
     */
     int HUD_Number: 0x18989C;
     //In-Game = 2
+    
+    double Door0: 0x1AF2F4, 0x80, 0x2E8,0x24,0x10;
+    //Door0 sind Doors zum kicken. 0=zu, 1=auf
 
     double Door1: 0x1AF2F4, 0x80, 0x3B4, 0x0, 0x10;
     double Door2: 0x1AF2F4, 0x80, 0x3B4, 0x4, 0x10;
