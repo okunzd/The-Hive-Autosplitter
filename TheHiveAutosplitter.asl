@@ -72,7 +72,7 @@ start{
 }
 split{
     //Splits when opening Level 3 door
-    if(vars.splitnum == 0 && settings["Level3Door"] && current.LevelNumber==103 && current.Door1 > 0){vars.splitnum++; return true;}
+    if(vars.splitnum == 0 && settings["Level3Door"] && current.LevelNumber==103 && current.Door1 > 0 || vars.splitnum == 0 && settings["Level3Door"] && current.LevelNumber==103 && current.Door0 > 0){vars.splitnum++; return true;}
     if(vars.splitnum == 0 && settings["Level3Door"] == false){vars.splitnum++;}
 
     //Splits when opening Level 4 door
